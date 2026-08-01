@@ -224,17 +224,147 @@
 	display: none;
 }
 
-/* ========== 2) FIMIPAY — like fimipay.com ========== */
+/* ========== 2) FIMIPAY — complete payment card ========== */
 .fimipay-style-fimipay {
 	border: 1px solid #eaecf0;
 	border-radius: 16px;
 	background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 	box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+	padding: 1.15rem 1.15rem 1.05rem;
+}
+
+.fimipay-checkout-card__brand {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 0.15rem;
+}
+
+.fimipay-brand-text {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--fimipay-blue);
+	letter-spacing: -0.02em;
+}
+
+.fimipay-rule {
+	border: 0;
+	border-top: 1px solid #eaecf0;
+	margin: 0.9rem 0;
+}
+
+.fimipay-complete__label {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #667085;
+	margin-bottom: 0.25rem;
+}
+
+.fimipay-complete__amount {
+	font-size: 1.65rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: #101828;
+	line-height: 1.15;
+	margin-bottom: 0.65rem;
+}
+
+.fimipay-complete__merchant-label {
+	font-size: 0.72rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #98a2b3;
+}
+
+.fimipay-complete__merchant {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: #344054;
+	margin-top: 0.15rem;
+}
+
+.fimipay-section-label {
+	font-size: 0.8125rem;
+	font-weight: 700;
+	color: #344054;
+	margin: 0 0 0.55rem;
+}
+
+.fimipay-method-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.5rem;
+}
+
+.fimipay-style-fimipay .fimipay-method-chip {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 2.6rem;
+	padding: 0.55rem 0.65rem;
+	border-radius: 12px;
+	border: 1.5px solid #e4e7ec;
+	background: #fff;
+	color: #344054;
+	font-size: 0.875rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fimipay-style-fimipay .fimipay-method-chip.is-active,
+.fimipay-style-fimipay .fimipay-method-chip[aria-pressed="true"] {
+	border-color: var(--fimipay-blue);
+	background: #eff4ff;
+	color: var(--fimipay-blue);
+	box-shadow: 0 0 0 3px rgba(10, 31, 184, 0.1);
 }
 
 .fimipay-style-fimipay .fimipay-phone-shell:focus-within {
 	border-color: var(--fimipay-blue);
 	box-shadow: 0 0 0 3px rgba(10, 31, 184, 0.12);
+}
+
+.fimipay-pay-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	width: 100%;
+	min-height: 3.1rem;
+	border: 0;
+	border-radius: 12px;
+	background: var(--fimipay-blue);
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: 0 8px 18px rgba(10, 31, 184, 0.25);
+	transition: transform 0.12s ease, background 0.15s ease;
+}
+
+.fimipay-pay-btn:hover {
+	background: #081894;
+}
+
+.fimipay-pay-btn:active {
+	transform: translateY(1px);
+}
+
+.fimipay-pay-btn__icon {
+	font-size: 0.75rem;
+	opacity: 0.9;
+}
+
+.fimipay-secure-note--center {
+	justify-content: center;
+	text-align: center;
+	border-top: 0;
+	padding-top: 0;
+	margin-top: 0;
 }
 
 /* ========== 3) MIDNIGHT — dark premium ========== */

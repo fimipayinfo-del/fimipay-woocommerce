@@ -89,7 +89,7 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 			'title'            => $this->gateway ? $this->gateway->title : __( 'FimiPay', 'fimipay-woocommerce' ),
 			'description'      => $this->gateway ? $this->gateway->description : '',
 			'supports'         => $this->gateway ? array_filter( $this->gateway->supports ) : array( 'products' ),
-			'phoneLabel'       => __( 'Mobile money number', 'fimipay-woocommerce' ),
+			'phoneLabel'       => __( 'Phone Number', 'fimipay-woocommerce' ),
 			'phoneHint'        => __( 'You will receive a Push USSD prompt to enter your PIN.', 'fimipay-woocommerce' ),
 			'phonePlaceholder' => '7XX XXX XXX',
 			'dialCode'         => '+255',
@@ -97,6 +97,13 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 			'testMode'         => $this->gateway ? $this->gateway->is_test_mode() : true,
 			'publicKey'        => $this->gateway ? $this->gateway->get_active_public_key() : '',
 			'checkoutStyle'    => $this->gateway ? $this->gateway->get_checkout_style() : 'fimipay',
+			'amountLabel'      => $this->gateway ? $this->gateway->get_cart_amount_label() : '',
+			'merchantName'     => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+			'completeLabel'    => __( 'Complete Payment', 'fimipay-woocommerce' ),
+			'merchantLabel'    => __( 'Merchant', 'fimipay-woocommerce' ),
+			'methodLabel'      => __( 'Choose Payment Method', 'fimipay-woocommerce' ),
+			'payPrefix'        => __( 'Pay', 'fimipay-woocommerce' ),
+			'secureNote'       => __( 'Secure checkout powered by FimiPay', 'fimipay-woocommerce' ),
 		);
 	}
 }
