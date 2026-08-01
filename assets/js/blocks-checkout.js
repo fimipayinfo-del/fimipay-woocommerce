@@ -93,27 +93,51 @@
 			[ phone, onPaymentSetup, emitResponse ]
 		);
 
-		return el(
-			'div',
-			{ className: 'fimipay-checkout-card fimipay-blocks-fields' },
-			settings.description
-				? el( 'p', { className: 'fimipay-checkout-card__desc' }, decodeEntities( settings.description ) )
-				: null,
-			el(
-				'div',
-				{ className: 'fimipay-method-row', 'aria-hidden': 'true' },
-				[ 'M-Pesa', 'Airtel', 'Mixx', 'HaloPesa' ].map( function ( label ) {
-					return el( 'span', { className: 'fimipay-method-chip', key: label }, label );
-				} )
-			),
+		var style = settings.checkoutStyle || 'fimipay';
+		var kids = [];
+
+		if ( settings.description ) {
+			kids.push(
+				el( 'p', { className: 'fimipay-checkout-card__desc', key: 'desc' }, decodeEntities( settings.description ) )
+			);
+		}
+
+		if ( style === 'fimipay' ) {
+			kids.push(
+				el(
+					'div',
+					{ className: 'fimipay-method-row', 'aria-hidden': 'true', key: 'methods' },
+					[ 'M-Pesa', 'Airtel', 'Mixx', 'HaloPesa' ].map( function ( label ) {
+						return el( 'span', { className: 'fimipay-method-chip', key: label }, label );
+					} )
+				)
+			);
+		}
+
+		if ( style === 'midnight' ) {
+			kids.push(
+				el(
+					'ul',
+					{ className: 'fimipay-steps', 'aria-hidden': 'true', key: 'steps' },
+					el( 'li', null, el( 'span', null, '1' ), 'Enter number' ),
+					el( 'li', null, el( 'span', null, '2' ), 'Approve USSD' ),
+					el( 'li', null, el( 'span', null, '3' ), 'Done' )
+				)
+			);
+		}
+
+		kids.push(
 			el(
 				'label',
-				{ htmlFor: 'fimipay-blocks-phone', className: 'fimipay-field-label' },
+				{ htmlFor: 'fimipay-blocks-phone', className: 'fimipay-field-label', key: 'label' },
 				settings.phoneLabel || 'Mobile money number'
-			),
+			)
+		);
+
+		kids.push(
 			el(
 				'div',
-				{ className: 'fimipay-phone-shell' },
+				{ className: 'fimipay-phone-shell', key: 'phone' },
 				el(
 					'div',
 					{ className: 'fimipay-phone-shell__prefix' },
@@ -133,8 +157,18 @@
 					autoComplete: 'tel-national',
 					required: true,
 				} )
-			),
-			el( 'p', { className: 'fimipay-phone-hint' }, settings.phoneHint || '' )
+			)
+		);
+
+		kids.push( el( 'p', { className: 'fimipay-phone-hint', key: 'hint' }, settings.phoneHint || '' ) );
+
+		return el(
+			'div',
+			{
+				className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-' + style,
+				'data-style': style,
+			},
+			kids
 		);
 	}
 

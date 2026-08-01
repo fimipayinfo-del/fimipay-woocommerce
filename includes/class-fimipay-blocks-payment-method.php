@@ -96,6 +96,7 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 			'logoUrl'          => $this->gateway ? $this->gateway->get_checkout_logo_url() : '',
 			'testMode'         => $this->gateway ? $this->gateway->is_test_mode() : true,
 			'publicKey'        => $this->gateway ? $this->gateway->get_active_public_key() : '',
+			'checkoutStyle'    => $this->gateway ? $this->gateway->get_checkout_style() : 'fimipay',
 		);
 	}
 }
