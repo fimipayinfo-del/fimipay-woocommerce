@@ -1,0 +1,23 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Secrets — never commit
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+secrets*.json
+
+# WordPress local noise
+wp-config.php
+/vendor/
+/node_modules/
+
+# Build artifacts
+*.zip
+*.log
