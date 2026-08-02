@@ -60,7 +60,7 @@
 				el( 'img', {
 					src: settings.logoUrl,
 					alt: '',
-					style: { height: '28px', marginRight: '8px', verticalAlign: 'middle' },
+					style: { height: '36px', marginRight: '8px', verticalAlign: 'middle' },
 				} ),
 				title
 			);

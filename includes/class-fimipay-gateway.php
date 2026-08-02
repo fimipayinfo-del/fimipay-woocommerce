@@ -594,7 +594,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		foreach ( $methods as $id => $meta ) {
 			$is_active = ( $selected === $id ) ? ' is-active' : '';
 			echo '<button type="button" class="fimipay-method-chip fimipay-method-chip--logo' . esc_attr( $is_active ) . '" data-method="' . esc_attr( $id ) . '" aria-label="' . esc_attr( $meta['label'] ) . '" aria-pressed="' . ( $selected === $id ? 'true' : 'false' ) . '" title="' . esc_attr( $meta['label'] ) . '">';
-			echo '<img src="' . esc_url( $meta['url'] ) . '" alt="' . esc_attr( $meta['label'] ) . '" class="fimipay-provider-logo" loading="lazy" width="96" height="40" />';
+			echo '<img src="' . esc_url( $meta['url'] ) . '" alt="' . esc_attr( $meta['label'] ) . '" class="fimipay-provider-logo" loading="lazy" width="78" height="26" />';
 			echo '</button>';
 		}
 		echo '</div>';

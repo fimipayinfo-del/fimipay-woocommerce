@@ -22,15 +22,15 @@
 }
 
 .fimipay-checkout-card__logo {
-	height: 36px;
+	height: 48px;
 	width: auto;
-	max-width: 160px;
+	max-width: 220px;
 	object-fit: contain;
 }
 
 .fimipay-checkout-card__logo--lg {
-	height: 44px;
-	max-width: 200px;
+	height: 56px;
+	max-width: 260px;
 }
 
 .fimipay-brand-text {
@@ -186,9 +186,9 @@
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	min-height: 3.4rem;
-	padding: 0.65rem 0.75rem;
-	border-radius: 14px;
+	min-height: 2.65rem;
+	padding: 0.4rem 0.55rem;
+	border-radius: 12px;
 	border: 1.5px solid #e4e7ec;
 	background: #fff;
 	cursor: pointer;
@@ -211,8 +211,8 @@
 }
 
 .fimipay-method-chip--logo .fimipay-provider-logo {
-	height: 38px;
-	max-width: 110px;
+	height: 26px;
+	max-width: 78px;
 }
 
 .fimipay-pay-btn {
@@ -330,8 +330,10 @@
 
 .fimipay-thankyou__logo {
 	display: block;
-	height: 40px;
+	height: 52px;
 	width: auto;
+	max-width: 240px;
+	object-fit: contain;
 	margin-bottom: 0.65rem;
 }
 
@@ -354,11 +356,22 @@
 		padding: 1rem;
 	}
 
+	.fimipay-checkout-card__logo {
+		height: 44px;
+		max-width: 200px;
+	}
+
 	.fimipay-checkout-card__logo--lg {
-		height: 40px;
+		height: 52px;
+		max-width: 230px;
 	}
 
 	.fimipay-method-chip--logo {
-		min-height: 3.15rem;
+		min-height: 2.5rem;
+	}
+
+	.fimipay-method-chip--logo .fimipay-provider-logo {
+		height: 24px;
+		max-width: 72px;
 	}
 }
