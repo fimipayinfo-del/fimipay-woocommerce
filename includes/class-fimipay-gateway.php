@@ -139,7 +139,39 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		if ( $this->custom_logo ) {
 			return esc_url( $this->custom_logo );
 		}
+		$wordmark = FIMIPAY_WC_PATH . 'assets/images/fimipay-wordmark.webp';
+		if ( file_exists( $wordmark ) ) {
+			return esc_url( FIMIPAY_WC_URL . 'assets/images/fimipay-wordmark.webp' );
+		}
 		return esc_url( FIMIPAY_WC_URL . 'assets/images/fimipay-logo.png' );
+	}
+
+	/**
+	 * Brand mark (icon) URL.
+	 *
+	 * @return string
+	 */
+	public function get_brand_mark_url() {
+		return esc_url( FIMIPAY_WC_URL . 'assets/images/fimipay-icon.png' );
+	}
+
+	/**
+	 * Brand header: large mark + wordmark/text for clear visibility.
+	 *
+	 * @param string $mode Mode badge label.
+	 */
+	private function render_brand_header( $mode ) {
+		echo '<div class="fimipay-checkout-card__brand">';
+		echo '<div class="fimipay-brand-lockup">';
+		if ( $this->custom_logo ) {
+			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $this->custom_logo ) . '" alt="FimiPay" />';
+		} else {
+			echo '<img class="fimipay-brand-mark" src="' . esc_url( $this->get_brand_mark_url() ) . '" alt="" width="48" height="48" />';
+			echo '<span class="fimipay-brand-text">FimiPay</span>';
+		}
+		echo '</div>';
+		echo '<span class="fimipay-checkout-card__mode">' . esc_html( $mode ) . '</span>';
+		echo '</div>';
 	}
 
 	/**
@@ -644,14 +676,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 	private function render_checkout_style_default( $logo, $mode, $desc, $local, $phone ) {
 		$amount = $this->get_cart_amount_label();
 
-		echo '<div class="fimipay-checkout-card__brand">';
-		if ( $logo ) {
-			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
-		} else {
-			echo '<strong class="fimipay-brand-text">FimiPay</strong>';
-		}
-		echo '<span class="fimipay-checkout-card__mode">' . esc_html( $mode ) . '</span>';
-		echo '</div>';
+		$this->render_brand_header( $mode );
 
 		if ( $desc ) {
 			echo '<p class="fimipay-checkout-card__desc">' . $desc . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped upstream
@@ -680,14 +705,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 			$merchant = __( 'Store', 'fimipay-woocommerce' );
 		}
 
-		echo '<div class="fimipay-checkout-card__brand">';
-		if ( $logo ) {
-			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
-		} else {
-			echo '<strong class="fimipay-brand-text">FimiPay</strong>';
-		}
-		echo '<span class="fimipay-checkout-card__mode">' . esc_html( $mode ) . '</span>';
-		echo '</div>';
+		$this->render_brand_header( $mode );
 
 		echo '<hr class="fimipay-rule" />';
 

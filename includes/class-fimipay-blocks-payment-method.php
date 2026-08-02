@@ -100,6 +100,7 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 			'phonePlaceholder' => '7XX XXX XXX',
 			'dialCode'         => '+255',
 			'logoUrl'          => $this->gateway ? $this->gateway->get_checkout_logo_url() : '',
+			'brandMarkUrl'     => $this->gateway ? $this->gateway->get_brand_mark_url() : '',
 			'testMode'         => $this->gateway ? $this->gateway->is_test_mode() : true,
 			'publicKey'        => $this->gateway ? $this->gateway->get_active_public_key() : '',
 			'checkoutStyle'    => $this->gateway ? $this->gateway->get_checkout_style() : 'fimipay',

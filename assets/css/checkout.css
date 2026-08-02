@@ -21,23 +21,40 @@
 	margin-bottom: 0.35rem;
 }
 
-.fimipay-checkout-card__logo {
+.fimipay-brand-lockup {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	min-width: 0;
+}
+
+.fimipay-brand-mark {
+	width: 48px;
 	height: 48px;
-	width: auto;
-	max-width: 220px;
+	flex-shrink: 0;
 	object-fit: contain;
+	border-radius: 12px;
+}
+
+.fimipay-checkout-card__logo {
+	height: 64px;
+	width: auto;
+	max-width: 280px;
+	object-fit: contain;
+	object-position: left center;
 }
 
 .fimipay-checkout-card__logo--lg {
-	height: 56px;
-	max-width: 260px;
+	height: 72px;
+	max-width: 320px;
 }
 
 .fimipay-brand-text {
-	font-size: 1.35rem;
+	font-size: 1.55rem;
 	font-weight: 800;
 	color: var(--fimipay-blue);
-	letter-spacing: -0.02em;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
 }
 
 .fimipay-checkout-card__mode {

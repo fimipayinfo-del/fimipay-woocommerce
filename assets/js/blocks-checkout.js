@@ -53,19 +53,36 @@
 
 	function Label() {
 		var title = decodeEntities( settings.title || 'FimiPay' );
-		if ( settings.logoUrl ) {
+		var mark = settings.brandMarkUrl || settings.logoUrl;
+		if ( mark ) {
 			return el(
 				'span',
-				{ className: 'fimipay-blocks-label-wrap' },
+				{ className: 'fimipay-blocks-label-wrap', style: { display: 'inline-flex', alignItems: 'center', gap: '8px' } },
 				el( 'img', {
-					src: settings.logoUrl,
+					src: mark,
 					alt: '',
-					style: { height: '36px', marginRight: '8px', verticalAlign: 'middle' },
+					style: { height: '28px', width: '28px', borderRadius: '8px', objectFit: 'contain' },
 				} ),
-				title
+				el( 'span', { style: { fontWeight: 800 } }, title )
 			);
 		}
 		return title;
+	}
+
+	function BrandHeader() {
+		return el(
+			'div',
+			{ className: 'fimipay-checkout-card__brand' },
+			el(
+				'div',
+				{ className: 'fimipay-brand-lockup' },
+				settings.brandMarkUrl
+					? el( 'img', { className: 'fimipay-brand-mark', src: settings.brandMarkUrl, alt: '', width: 48, height: 48 } )
+					: null,
+				el( 'span', { className: 'fimipay-brand-text' }, 'FimiPay' )
+			),
+			settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
+		);
 	}
 
 	function PhoneField( props ) {
@@ -144,14 +161,7 @@
 			return el(
 				'div',
 				{ className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-default', 'data-style': 'default' },
-				el(
-					'div',
-					{ className: 'fimipay-checkout-card__brand' },
-					settings.logoUrl
-						? el( 'img', { className: 'fimipay-checkout-card__logo fimipay-checkout-card__logo--lg', src: settings.logoUrl, alt: 'FimiPay' } )
-						: el( 'strong', { className: 'fimipay-brand-text' }, 'FimiPay' ),
-					settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
-				),
+				el( BrandHeader, null ),
 				settings.description
 					? el( 'p', { className: 'fimipay-checkout-card__desc' }, decodeEntities( settings.description ) )
 					: el(
@@ -177,14 +187,7 @@
 		return el(
 			'div',
 			{ className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-fimipay', 'data-style': 'fimipay' },
-			el(
-				'div',
-				{ className: 'fimipay-checkout-card__brand' },
-				settings.logoUrl
-					? el( 'img', { className: 'fimipay-checkout-card__logo fimipay-checkout-card__logo--lg', src: settings.logoUrl, alt: 'FimiPay' } )
-					: el( 'strong', { className: 'fimipay-brand-text' }, 'FimiPay' ),
-				settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
-			),
+			el( BrandHeader, null ),
 			el( 'hr', { className: 'fimipay-rule' } ),
 			el(
 				'div',
