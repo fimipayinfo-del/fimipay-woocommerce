@@ -22,16 +22,16 @@
 }
 
 .fimipay-checkout-card__logo {
-	height: 52px;
+	height: 72px;
 	width: auto;
-	max-width: 260px;
+	max-width: 340px;
 	object-fit: contain;
 	object-position: left center;
 }
 
 .fimipay-checkout-card__logo--lg {
-	height: 64px;
-	max-width: 320px;
+	height: 84px;
+	max-width: 400px;
 }
 
 .fimipay-checkout-card__mode {
@@ -351,13 +351,13 @@
 	}
 
 	.fimipay-checkout-card__logo {
-		height: 48px;
-		max-width: 240px;
+		height: 64px;
+		max-width: 300px;
 	}
 
 	.fimipay-checkout-card__logo--lg {
-		height: 58px;
-		max-width: 280px;
+		height: 76px;
+		max-width: 360px;
 	}
 
 	.fimipay-method-chip--logo {
