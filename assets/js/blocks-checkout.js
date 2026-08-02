@@ -73,14 +73,13 @@
 		return el(
 			'div',
 			{ className: 'fimipay-checkout-card__brand' },
-			el(
-				'div',
-				{ className: 'fimipay-brand-lockup' },
-				settings.brandMarkUrl
-					? el( 'img', { className: 'fimipay-brand-mark', src: settings.brandMarkUrl, alt: '', width: 48, height: 48 } )
-					: null,
-				el( 'span', { className: 'fimipay-brand-text' }, 'FimiPay' )
-			),
+			settings.logoUrl
+				? el( 'img', {
+						className: 'fimipay-checkout-card__logo fimipay-checkout-card__logo--lg',
+						src: settings.logoUrl,
+						alt: 'FimiPay',
+				  } )
+				: el( 'strong', { className: 'fimipay-brand-text' }, 'FimiPay' ),
 			settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
 		);
 	}
