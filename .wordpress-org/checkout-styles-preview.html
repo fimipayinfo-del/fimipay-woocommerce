@@ -4,23 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FimiPay Checkout Styles Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/checkout.css" />
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
       background: #eef2f7;
       color: #101828;
       padding: 24px 16px 48px;
     }
-    h1 { text-align: center; font-size: 1.4rem; margin: 0 0 8px; }
+    h1 { text-align: center; font-size: 1.4rem; margin: 0 0 8px; font-weight: 800; }
     .subtitle { text-align: center; color: #667085; margin: 0 0 28px; font-size: 0.95rem; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      max-width: 1140px;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 22px;
+      max-width: 920px;
       margin: 0 auto;
     }
     .panel {
@@ -29,38 +31,45 @@
       padding: 16px;
       box-shadow: 0 4px 20px rgba(16,24,40,.06);
     }
-    .panel h2 { margin: 0 0 4px; font-size: 1rem; }
-    .panel .tag { display: inline-block; margin-bottom: 12px; font-size: 0.75rem; color: #667085; }
+    .panel h2 { margin: 0 0 4px; font-size: 1rem; font-weight: 800; }
+    .panel .tag { display: inline-block; margin-bottom: 12px; font-size: 0.75rem; color: #667085; font-weight: 600; }
     .phone-frame {
-      max-width: 380px;
+      max-width: 400px;
       margin: 0 auto;
       background: #f8fafc;
       border: 1px solid #e4e7ec;
       border-radius: 20px;
       padding: 16px 14px 20px;
     }
-    .phone-frame.dark-bg { background: #020617; border-color: #1e293b; }
   </style>
 </head>
 <body>
   <h1>FimiPay — Checkout styles preview</h1>
-  <p class="subtitle">Styles 3 ambazo merchant anachagua kwenye settings</p>
+  <p class="subtitle">Styles 2 — Default na FimiPay</p>
 
   <div class="grid">
     <section class="panel">
       <h2>1. Default</h2>
-      <span class="tag">Clean &amp; simple</span>
+      <span class="tag">Phone + Pay button + provider logos</span>
       <div class="phone-frame">
         <div class="fimipay-checkout-card fimipay-style-default">
-          <div class="fimipay-checkout-card__header fimipay-checkout-card__header--simple">
-            <img class="fimipay-checkout-card__logo" src="../assets/images/fimipay-logo.png" alt="FimiPay" />
+          <div class="fimipay-checkout-card__brand">
+            <img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="../assets/images/fimipay-logo.png" alt="FimiPay" />
             <span class="fimipay-checkout-card__mode">Test mode</span>
           </div>
-          <p class="fimipay-checkout-card__desc">Approve the Push USSD on your phone to complete payment.</p>
+          <p class="fimipay-checkout-card__desc">Enter your mobile money phone number below, then tap Pay. You will get a prompt on your phone to approve.</p>
           <label class="fimipay-field-label">Phone Number *</label>
           <div class="fimipay-phone-shell">
             <div class="fimipay-phone-shell__prefix"><span class="fimipay-flag">🇹🇿</span><span>+255</span></div>
             <input class="fimipay-phone-shell__input" type="tel" value="712 345 678" readonly />
+          </div>
+          <p class="fimipay-phone-hint">Use the number registered to your mobile money wallet.</p>
+          <button type="button" class="fimipay-pay-btn"><span class="fimipay-pay-btn__icon">▶</span> Pay TZS 25,000</button>
+          <div class="fimipay-providers-row">
+            <span class="fimipay-providers-row__item"><img class="fimipay-provider-logo" src="../assets/images/providers/mpesa.webp" alt="M-Pesa" /></span>
+            <span class="fimipay-providers-row__item"><img class="fimipay-provider-logo" src="../assets/images/providers/airtel.webp" alt="Airtel" /></span>
+            <span class="fimipay-providers-row__item"><img class="fimipay-provider-logo" src="../assets/images/providers/mixx.webp" alt="Mixx" /></span>
+            <span class="fimipay-providers-row__item"><img class="fimipay-provider-logo" src="../assets/images/providers/halopesa.webp" alt="HaloPesa" /></span>
           </div>
         </div>
       </div>
@@ -68,11 +77,11 @@
 
     <section class="panel">
       <h2>2. FimiPay</h2>
-      <span class="tag">Complete Payment card (wireframe)</span>
+      <span class="tag">Complete Payment · logo-only methods</span>
       <div class="phone-frame">
         <div class="fimipay-checkout-card fimipay-style-fimipay">
           <div class="fimipay-checkout-card__brand">
-            <img class="fimipay-checkout-card__logo" src="../assets/images/fimipay-logo.png" alt="FimiPay" />
+            <img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="../assets/images/fimipay-logo.png" alt="FimiPay" />
             <span class="fimipay-checkout-card__mode">Test mode</span>
           </div>
           <hr class="fimipay-rule" />
@@ -85,10 +94,10 @@
           <hr class="fimipay-rule" />
           <div class="fimipay-section-label">Choose Payment Method</div>
           <div class="fimipay-method-grid">
-            <button type="button" class="fimipay-method-chip is-active">M-Pesa</button>
-            <button type="button" class="fimipay-method-chip">Airtel</button>
-            <button type="button" class="fimipay-method-chip">Mixx</button>
-            <button type="button" class="fimipay-method-chip">HaloPesa</button>
+            <button type="button" class="fimipay-method-chip fimipay-method-chip--logo is-active" aria-label="M-Pesa"><img class="fimipay-provider-logo" src="../assets/images/providers/mpesa.webp" alt="M-Pesa" /></button>
+            <button type="button" class="fimipay-method-chip fimipay-method-chip--logo" aria-label="Airtel"><img class="fimipay-provider-logo" src="../assets/images/providers/airtel.webp" alt="Airtel" /></button>
+            <button type="button" class="fimipay-method-chip fimipay-method-chip--logo" aria-label="Mixx"><img class="fimipay-provider-logo" src="../assets/images/providers/mixx.webp" alt="Mixx" /></button>
+            <button type="button" class="fimipay-method-chip fimipay-method-chip--logo" aria-label="HaloPesa"><img class="fimipay-provider-logo" src="../assets/images/providers/halopesa.webp" alt="HaloPesa" /></button>
           </div>
           <hr class="fimipay-rule" />
           <label class="fimipay-field-label">Phone Number *</label>
@@ -96,44 +105,14 @@
             <div class="fimipay-phone-shell__prefix"><span class="fimipay-flag">🇹🇿</span><span>+255</span></div>
             <input class="fimipay-phone-shell__input" type="tel" value="712 345 678" readonly />
           </div>
+          <p class="fimipay-phone-hint">Enter the phone number linked to your wallet to pay.</p>
           <hr class="fimipay-rule" />
-          <button type="button" class="fimipay-pay-btn">
-            <span class="fimipay-pay-btn__icon">▶</span> Pay TZS 25,000
-          </button>
+          <button type="button" class="fimipay-pay-btn"><span class="fimipay-pay-btn__icon">▶</span> Pay TZS 25,000</button>
           <hr class="fimipay-rule" />
           <div class="fimipay-secure-note fimipay-secure-note--center">
             <span class="fimipay-secure-note__icon">🔒</span>
             <span>Secure checkout powered by FimiPay</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2>3. Midnight</h2>
-      <span class="tag">Dark premium</span>
-      <div class="phone-frame dark-bg">
-        <div class="fimipay-checkout-card fimipay-style-midnight">
-          <div class="fimipay-midnight-glow"></div>
-          <div class="fimipay-checkout-card__header">
-            <img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--invert" src="../assets/images/fimipay-logo.png" alt="FimiPay" />
-            <div class="fimipay-checkout-card__heading">
-              <strong>Secure mobile payment</strong>
-              <span class="fimipay-checkout-card__mode">Test mode</span>
-            </div>
-          </div>
-          <p class="fimipay-checkout-card__desc">Approve the Push USSD on your phone to complete payment.</p>
-          <ul class="fimipay-steps">
-            <li><span>1</span>Enter number</li>
-            <li><span>2</span>Approve USSD</li>
-            <li><span>3</span>Done</li>
-          </ul>
-          <label class="fimipay-field-label">Phone Number *</label>
-          <div class="fimipay-phone-shell">
-            <div class="fimipay-phone-shell__prefix"><span class="fimipay-flag">🇹🇿</span><span>+255</span></div>
-            <input class="fimipay-phone-shell__input" type="tel" value="712 345 678" readonly />
-          </div>
-          <div class="fimipay-secure-note"><span>Encrypted checkout · Powered by FimiPay</span></div>
         </div>
       </div>
     </section>

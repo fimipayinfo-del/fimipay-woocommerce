@@ -3,7 +3,7 @@
  * Plugin Name: FimiPay for WooCommerce
  * Plugin URI:  https://fimipay.com
  * Description: Accept mobile money payments (Push USSD) via FimiPay on your WooCommerce store.
- * Version:     1.1.2
+ * Version:     1.1.3
  * Author:      FimiPay
  * Author URI:  https://fimipay.com
  * License:     GPL-2.0-or-later
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FIMIPAY_WC_VERSION', '1.1.2' );
+define( 'FIMIPAY_WC_VERSION', '1.1.3' );
 define( 'FIMIPAY_WC_FILE', __FILE__ );
 define( 'FIMIPAY_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FIMIPAY_WC_URL', plugin_dir_url( __FILE__ ) );

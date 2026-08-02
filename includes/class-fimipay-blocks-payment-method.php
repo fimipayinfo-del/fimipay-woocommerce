@@ -69,9 +69,15 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 		);
 
 		wp_enqueue_style(
+			'fimipay-font',
+			'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap',
+			array(),
+			null
+		);
+		wp_enqueue_style(
 			'fimipay-checkout',
 			FIMIPAY_WC_URL . 'assets/css/checkout.css',
-			array(),
+			array( 'fimipay-font' ),
 			FIMIPAY_WC_VERSION
 		);
 
@@ -104,6 +110,8 @@ final class Fimipay_Blocks_Payment_Method extends AbstractPaymentMethodType {
 			'methodLabel'      => __( 'Choose Payment Method', 'fimipay-woocommerce' ),
 			'payPrefix'        => __( 'Pay', 'fimipay-woocommerce' ),
 			'secureNote'       => __( 'Secure checkout powered by FimiPay', 'fimipay-woocommerce' ),
+			'providers'        => $this->gateway ? $this->gateway->get_provider_logos() : array(),
+			'phoneHint'        => __( 'Enter the phone number linked to your wallet to pay.', 'fimipay-woocommerce' ),
 		);
 	}
 }

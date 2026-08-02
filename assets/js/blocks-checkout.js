@@ -24,12 +24,16 @@
 					return text;
 			  };
 
-	var METHODS = [
-		{ id: 'mpesa', label: 'M-Pesa' },
-		{ id: 'airtel', label: 'Airtel' },
-		{ id: 'mixx', label: 'Mixx' },
-		{ id: 'halopesa', label: 'HaloPesa' },
-	];
+	function providerList() {
+		var providers = settings.providers || {};
+		return Object.keys( providers ).map( function ( id ) {
+			return {
+				id: id,
+				label: providers[ id ].label || id,
+				url: providers[ id ].url || '',
+			};
+		} );
+	}
 
 	function toLocalNine( value ) {
 		var d = String( value || '' ).replace( /\D+/g, '' );
@@ -56,12 +60,44 @@
 				el( 'img', {
 					src: settings.logoUrl,
 					alt: '',
-					style: { height: '20px', marginRight: '8px', verticalAlign: 'middle' },
+					style: { height: '28px', marginRight: '8px', verticalAlign: 'middle' },
 				} ),
 				title
 			);
 		}
 		return title;
+	}
+
+	function PhoneField( props ) {
+		return el(
+			'div',
+			null,
+			el( 'label', { htmlFor: 'fimipay-blocks-phone', className: 'fimipay-field-label' }, settings.phoneLabel || 'Phone Number' ),
+			el(
+				'div',
+				{ className: 'fimipay-phone-shell' },
+				el(
+					'div',
+					{ className: 'fimipay-phone-shell__prefix' },
+					el( 'span', { className: 'fimipay-flag', 'aria-hidden': 'true' }, '🇹🇿' ),
+					el( 'span', null, settings.dialCode || '+255' )
+				),
+				el( 'input', {
+					id: 'fimipay-blocks-phone',
+					type: 'tel',
+					inputMode: 'tel',
+					className: 'fimipay-phone-shell__input',
+					placeholder: '712 345 678',
+					value: props.phone,
+					onChange: function ( event ) {
+						props.setPhone( toLocalNine( event.target.value ) );
+					},
+					autoComplete: 'tel-national',
+					required: true,
+				} )
+			),
+			el( 'p', { className: 'fimipay-phone-hint' }, settings.phoneHint || 'Enter the phone number linked to your wallet to pay.' )
+		);
 	}
 
 	function Content( props ) {
@@ -74,23 +110,22 @@
 		var channelState = useState( 'mpesa' );
 		var channel = channelState[ 0 ];
 		var setChannel = channelState[ 1 ];
-		var style = settings.checkoutStyle || 'fimipay';
+		var style = settings.checkoutStyle === 'default' ? 'default' : 'fimipay';
+		var providers = providerList();
 
 		useEffect(
 			function () {
 				if ( ! onPaymentSetup ) {
 					return undefined;
 				}
-
 				return onPaymentSetup( function () {
 					var msisdn = toMsisdn( phone );
 					if ( ! msisdn ) {
 						return {
 							type: emitResponse.responseTypes.ERROR,
-							message: 'Please enter a valid mobile money phone number.',
+							message: 'Please enter your mobile money phone number to pay.',
 						};
 					}
-
 					return {
 						type: emitResponse.responseTypes.SUCCESS,
 						meta: {
@@ -105,137 +140,92 @@
 			[ phone, channel, onPaymentSetup, emitResponse ]
 		);
 
-		if ( style === 'fimipay' ) {
-			var amount = settings.amountLabel || '';
+		if ( style === 'default' ) {
 			return el(
 				'div',
-				{ className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-fimipay', 'data-style': 'fimipay' },
+				{ className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-default', 'data-style': 'default' },
 				el(
 					'div',
 					{ className: 'fimipay-checkout-card__brand' },
 					settings.logoUrl
-						? el( 'img', { className: 'fimipay-checkout-card__logo', src: settings.logoUrl, alt: 'FimiPay' } )
+						? el( 'img', { className: 'fimipay-checkout-card__logo fimipay-checkout-card__logo--lg', src: settings.logoUrl, alt: 'FimiPay' } )
 						: el( 'strong', { className: 'fimipay-brand-text' }, 'FimiPay' ),
 					settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
 				),
-				el( 'hr', { className: 'fimipay-rule' } ),
+				settings.description
+					? el( 'p', { className: 'fimipay-checkout-card__desc' }, decodeEntities( settings.description ) )
+					: el(
+							'p',
+							{ className: 'fimipay-checkout-card__desc' },
+							'Enter your mobile money phone number below, then tap Pay. You will get a prompt on your phone to approve.'
+					  ),
+				el( PhoneField, { phone: phone, setPhone: setPhone } ),
 				el(
 					'div',
-					{ className: 'fimipay-complete' },
-					el( 'div', { className: 'fimipay-complete__label' }, settings.completeLabel || 'Complete Payment' ),
-					el( 'div', { className: 'fimipay-complete__amount' }, amount || '—' ),
-					el( 'div', { className: 'fimipay-complete__merchant-label' }, settings.merchantLabel || 'Merchant' ),
-					el( 'div', { className: 'fimipay-complete__merchant' }, settings.merchantName || 'Store' )
-				),
-				el( 'hr', { className: 'fimipay-rule' } ),
-				el( 'div', { className: 'fimipay-section-label' }, settings.methodLabel || 'Choose Payment Method' ),
-				el(
-					'div',
-					{ className: 'fimipay-method-grid' },
-					METHODS.map( function ( method ) {
+					{ className: 'fimipay-providers-row' },
+					providers.map( function ( p ) {
 						return el(
-							'button',
-							{
-								type: 'button',
-								key: method.id,
-								className: 'fimipay-method-chip' + ( channel === method.id ? ' is-active' : '' ),
-								'aria-pressed': channel === method.id ? 'true' : 'false',
-								onClick: function () {
-									setChannel( method.id );
-								},
-							},
-							method.label
+							'span',
+							{ className: 'fimipay-providers-row__item', key: p.id },
+							el( 'img', { className: 'fimipay-provider-logo', src: p.url, alt: p.label } )
 						);
 					} )
-				),
-				el( 'hr', { className: 'fimipay-rule' } ),
-				el( 'label', { htmlFor: 'fimipay-blocks-phone', className: 'fimipay-field-label' }, settings.phoneLabel || 'Phone Number' ),
-				el(
-					'div',
-					{ className: 'fimipay-phone-shell' },
-					el(
-						'div',
-						{ className: 'fimipay-phone-shell__prefix' },
-						el( 'span', { className: 'fimipay-flag', 'aria-hidden': 'true' }, '🇹🇿' ),
-						el( 'span', null, settings.dialCode || '+255' )
-					),
-					el( 'input', {
-						id: 'fimipay-blocks-phone',
-						type: 'tel',
-						inputMode: 'tel',
-						className: 'fimipay-phone-shell__input',
-						placeholder: '712 345 678',
-						value: phone,
-						onChange: function ( event ) {
-							setPhone( toLocalNine( event.target.value ) );
-						},
-						autoComplete: 'tel-national',
-						required: true,
-					} )
-				),
-				el( 'hr', { className: 'fimipay-rule' } ),
-				el(
-					'div',
-					{ className: 'fimipay-secure-note fimipay-secure-note--center' },
-					el( 'span', { className: 'fimipay-secure-note__icon', 'aria-hidden': 'true' }, '🔒' ),
-					el( 'span', null, settings.secureNote || 'Secure checkout powered by FimiPay' )
 				)
 			);
 		}
-
-		var kids = [];
-		if ( settings.description ) {
-			kids.push(
-				el( 'p', { className: 'fimipay-checkout-card__desc', key: 'desc' }, decodeEntities( settings.description ) )
-			);
-		}
-		if ( style === 'midnight' ) {
-			kids.push(
-				el(
-					'ul',
-					{ className: 'fimipay-steps', 'aria-hidden': 'true', key: 'steps' },
-					el( 'li', null, el( 'span', null, '1' ), 'Enter number' ),
-					el( 'li', null, el( 'span', null, '2' ), 'Approve USSD' ),
-					el( 'li', null, el( 'span', null, '3' ), 'Done' )
-				)
-			);
-		}
-		kids.push(
-			el( 'label', { htmlFor: 'fimipay-blocks-phone', className: 'fimipay-field-label', key: 'label' }, settings.phoneLabel || 'Phone Number' )
-		);
-		kids.push(
-			el(
-				'div',
-				{ className: 'fimipay-phone-shell', key: 'phone' },
-				el(
-					'div',
-					{ className: 'fimipay-phone-shell__prefix' },
-					el( 'span', { className: 'fimipay-flag', 'aria-hidden': 'true' }, '🇹🇿' ),
-					el( 'span', null, settings.dialCode || '+255' )
-				),
-				el( 'input', {
-					id: 'fimipay-blocks-phone',
-					type: 'tel',
-					inputMode: 'tel',
-					className: 'fimipay-phone-shell__input',
-					placeholder: settings.phonePlaceholder || '7XX XXX XXX',
-					value: phone,
-					onChange: function ( event ) {
-						setPhone( toLocalNine( event.target.value ) );
-					},
-					autoComplete: 'tel-national',
-					required: true,
-				} )
-			)
-		);
 
 		return el(
 			'div',
-			{
-				className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-' + style,
-				'data-style': style,
-			},
-			kids
+			{ className: 'fimipay-checkout-card fimipay-blocks-fields fimipay-style-fimipay', 'data-style': 'fimipay' },
+			el(
+				'div',
+				{ className: 'fimipay-checkout-card__brand' },
+				settings.logoUrl
+					? el( 'img', { className: 'fimipay-checkout-card__logo fimipay-checkout-card__logo--lg', src: settings.logoUrl, alt: 'FimiPay' } )
+					: el( 'strong', { className: 'fimipay-brand-text' }, 'FimiPay' ),
+				settings.testMode ? el( 'span', { className: 'fimipay-checkout-card__mode' }, 'Test mode' ) : null
+			),
+			el( 'hr', { className: 'fimipay-rule' } ),
+			el(
+				'div',
+				{ className: 'fimipay-complete' },
+				el( 'div', { className: 'fimipay-complete__label' }, settings.completeLabel || 'Complete Payment' ),
+				el( 'div', { className: 'fimipay-complete__amount' }, settings.amountLabel || '—' ),
+				el( 'div', { className: 'fimipay-complete__merchant-label' }, settings.merchantLabel || 'Merchant' ),
+				el( 'div', { className: 'fimipay-complete__merchant' }, settings.merchantName || 'Store' )
+			),
+			el( 'hr', { className: 'fimipay-rule' } ),
+			el( 'div', { className: 'fimipay-section-label' }, settings.methodLabel || 'Choose Payment Method' ),
+			el(
+				'div',
+				{ className: 'fimipay-method-grid' },
+				providers.map( function ( method ) {
+					return el(
+						'button',
+						{
+							type: 'button',
+							key: method.id,
+							className: 'fimipay-method-chip fimipay-method-chip--logo' + ( channel === method.id ? ' is-active' : '' ),
+							'aria-label': method.label,
+							'aria-pressed': channel === method.id ? 'true' : 'false',
+							title: method.label,
+							onClick: function () {
+								setChannel( method.id );
+							},
+						},
+						el( 'img', { className: 'fimipay-provider-logo', src: method.url, alt: method.label } )
+					);
+				} )
+			),
+			el( 'hr', { className: 'fimipay-rule' } ),
+			el( PhoneField, { phone: phone, setPhone: setPhone } ),
+			el( 'hr', { className: 'fimipay-rule' } ),
+			el(
+				'div',
+				{ className: 'fimipay-secure-note fimipay-secure-note--center' },
+				el( 'span', { className: 'fimipay-secure-note__icon', 'aria-hidden': 'true' }, '🔒' ),
+				el( 'span', null, settings.secureNote || 'Secure checkout powered by FimiPay' )
+			)
 		);
 	}
 

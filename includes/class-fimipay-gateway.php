@@ -145,12 +145,42 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Selected checkout UI style.
 	 *
-	 * @return string default|fimipay|midnight
+	 * @return string default|fimipay
 	 */
 	public function get_checkout_style() {
-		$style = (string) $this->checkout_style;
-		$allowed = array( 'default', 'fimipay', 'midnight' );
+		$style   = (string) $this->checkout_style;
+		$allowed = array( 'default', 'fimipay' );
+		if ( 'midnight' === $style ) {
+			return 'fimipay';
+		}
 		return in_array( $style, $allowed, true ) ? $style : 'fimipay';
+	}
+
+	/**
+	 * Provider logo map (URL + label).
+	 *
+	 * @return array<string, array{label:string,url:string}>
+	 */
+	public function get_provider_logos() {
+		$base = FIMIPAY_WC_URL . 'assets/images/providers/';
+		return array(
+			'mpesa'    => array(
+				'label' => 'M-Pesa',
+				'url'   => $base . 'mpesa.webp',
+			),
+			'airtel'   => array(
+				'label' => 'Airtel Money',
+				'url'   => $base . 'airtel.webp',
+			),
+			'mixx'     => array(
+				'label' => 'Mixx by Yas',
+				'url'   => $base . 'mixx.webp',
+			),
+			'halopesa' => array(
+				'label' => 'HaloPesa',
+				'url'   => $base . 'halopesa.webp',
+			),
+		);
 	}
 
 	/**
@@ -177,7 +207,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Description', 'fimipay-woocommerce' ),
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description shown at checkout.', 'fimipay-woocommerce' ),
-				'default'     => __( 'Approve the Push USSD on your phone to complete payment.', 'fimipay-woocommerce' ),
+				'default'     => __( 'Enter your mobile money phone number below, then tap Pay. You will get a prompt on your phone to approve.', 'fimipay-woocommerce' ),
 			),
 			'checkout_style'      => array(
 				'title'       => __( 'Checkout style', 'fimipay-woocommerce' ),
@@ -185,9 +215,8 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 				'description' => __( 'Choose how the FimiPay payment box looks on checkout.', 'fimipay-woocommerce' ),
 				'default'     => 'fimipay',
 				'options'     => array(
-					'default'  => __( 'Default — clean & simple', 'fimipay-woocommerce' ),
-					'fimipay'  => __( 'FimiPay — like fimipay.com', 'fimipay-woocommerce' ),
-					'midnight' => __( 'Midnight — dark premium', 'fimipay-woocommerce' ),
+					'default' => __( 'Default — simple with Pay button', 'fimipay-woocommerce' ),
+					'fimipay' => __( 'FimiPay — complete payment card', 'fimipay-woocommerce' ),
 				),
 			),
 			'api_credentials'     => array(
@@ -446,9 +475,16 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		}
 
 		wp_enqueue_style(
+			'fimipay-font',
+			'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap',
+			array(),
+			null
+		);
+
+		wp_enqueue_style(
 			'fimipay-checkout',
 			FIMIPAY_WC_URL . 'assets/css/checkout.css',
-			array(),
+			array( 'fimipay-font' ),
 			FIMIPAY_WC_VERSION
 		);
 
@@ -472,6 +508,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 				'checkoutStyle' => $this->get_checkout_style(),
 				'amountLabel'   => $this->get_cart_amount_label(),
 				'merchantName'  => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+				'providers'     => $this->get_provider_logos(),
 			)
 		);
 	}
@@ -511,14 +548,14 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		$style = $this->get_checkout_style();
 		$logo  = $this->get_checkout_logo_url();
 		$mode  = $this->is_test_mode() ? __( 'Test mode', 'fimipay-woocommerce' ) : __( 'Live', 'fimipay-woocommerce' );
-		$desc  = $this->description ? esc_html( wp_strip_all_tags( $this->description ) ) : '';
+		$desc  = $this->description
+			? esc_html( wp_strip_all_tags( $this->description ) )
+			: esc_html__( 'Enter your mobile money phone number below, then tap Pay. You will get a prompt on your phone to approve.', 'fimipay-woocommerce' );
 
 		echo '<div class="fimipay-checkout-card fimipay-style-' . esc_attr( $style ) . '" id="fimipay-cc-form" data-style="' . esc_attr( $style ) . '">';
 
 		if ( 'default' === $style ) {
 			$this->render_checkout_style_default( $logo, $mode, $desc, $local, $phone );
-		} elseif ( 'midnight' === $style ) {
-			$this->render_checkout_style_midnight( $logo, $mode, $desc, $local, $phone );
 		} else {
 			$this->render_checkout_style_fimipay( $logo, $mode, $desc, $local, $phone );
 		}
@@ -546,27 +583,53 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Selectable mobile money methods.
+	 * Selectable mobile money methods (logo only).
 	 *
 	 * @param string $selected Selected method id.
 	 */
 	private function render_method_picker( $selected = 'mpesa' ) {
-		$methods = array(
-			'mpesa'    => 'M-Pesa',
-			'airtel'   => 'Airtel',
-			'mixx'     => 'Mixx',
-			'halopesa' => 'HaloPesa',
-		);
+		$methods = $this->get_provider_logos();
 		echo '<div class="fimipay-section-label">' . esc_html__( 'Choose Payment Method', 'fimipay-woocommerce' ) . '</div>';
 		echo '<div class="fimipay-method-grid" role="radiogroup" aria-label="' . esc_attr__( 'Payment method', 'fimipay-woocommerce' ) . '">';
-		foreach ( $methods as $id => $label ) {
+		foreach ( $methods as $id => $meta ) {
 			$is_active = ( $selected === $id ) ? ' is-active' : '';
-			echo '<button type="button" class="fimipay-method-chip' . esc_attr( $is_active ) . '" data-method="' . esc_attr( $id ) . '" aria-pressed="' . ( $selected === $id ? 'true' : 'false' ) . '">';
-			echo esc_html( $label );
+			echo '<button type="button" class="fimipay-method-chip fimipay-method-chip--logo' . esc_attr( $is_active ) . '" data-method="' . esc_attr( $id ) . '" aria-label="' . esc_attr( $meta['label'] ) . '" aria-pressed="' . ( $selected === $id ? 'true' : 'false' ) . '" title="' . esc_attr( $meta['label'] ) . '">';
+			echo '<img src="' . esc_url( $meta['url'] ) . '" alt="' . esc_attr( $meta['label'] ) . '" class="fimipay-provider-logo" loading="lazy" width="96" height="40" />';
 			echo '</button>';
 		}
 		echo '</div>';
 		echo '<input type="hidden" name="fimipay_channel" id="fimipay_channel" value="' . esc_attr( $selected ) . '" />';
+	}
+
+	/**
+	 * Non-selectable provider logos row (under Pay button).
+	 */
+	private function render_provider_logos_row() {
+		echo '<div class="fimipay-providers-row" aria-label="' . esc_attr__( 'Supported mobile money providers', 'fimipay-woocommerce' ) . '">';
+		foreach ( $this->get_provider_logos() as $meta ) {
+			echo '<span class="fimipay-providers-row__item">';
+			echo '<img src="' . esc_url( $meta['url'] ) . '" alt="' . esc_attr( $meta['label'] ) . '" class="fimipay-provider-logo" loading="lazy" width="72" height="32" />';
+			echo '</span>';
+		}
+		echo '</div>';
+	}
+
+	/**
+	 * Shared Pay CTA that triggers WooCommerce place order.
+	 *
+	 * @param string $amount Formatted amount.
+	 */
+	private function render_pay_button( $amount ) {
+		echo '<button type="button" class="fimipay-pay-btn" id="fimipay-pay-btn">';
+		echo '<span class="fimipay-pay-btn__icon" aria-hidden="true">▶</span> ';
+		echo esc_html(
+			sprintf(
+				/* translators: %s: formatted amount */
+				__( 'Pay %s', 'fimipay-woocommerce' ),
+				$amount ? $amount : __( 'now', 'fimipay-woocommerce' )
+			)
+		);
+		echo '</button>';
 	}
 
 	/**
@@ -579,16 +642,26 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 	 * @param string $phone Raw phone.
 	 */
 	private function render_checkout_style_default( $logo, $mode, $desc, $local, $phone ) {
-		echo '<div class="fimipay-checkout-card__header fimipay-checkout-card__header--simple">';
+		$amount = $this->get_cart_amount_label();
+
+		echo '<div class="fimipay-checkout-card__brand">';
 		if ( $logo ) {
-			echo '<img class="fimipay-checkout-card__logo" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
+			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
+		} else {
+			echo '<strong class="fimipay-brand-text">FimiPay</strong>';
 		}
 		echo '<span class="fimipay-checkout-card__mode">' . esc_html( $mode ) . '</span>';
 		echo '</div>';
+
 		if ( $desc ) {
 			echo '<p class="fimipay-checkout-card__desc">' . $desc . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped upstream
 		}
-		$this->render_phone_field( $local, $phone );
+
+		$this->render_phone_field( $local, $phone, '712 345 678', __( 'Phone Number', 'fimipay-woocommerce' ) );
+		echo '<p class="fimipay-phone-hint">' . esc_html__( 'Use the number registered to your mobile money wallet.', 'fimipay-woocommerce' ) . '</p>';
+
+		$this->render_pay_button( $amount );
+		$this->render_provider_logos_row();
 	}
 
 	/**
@@ -609,7 +682,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 
 		echo '<div class="fimipay-checkout-card__brand">';
 		if ( $logo ) {
-			echo '<img class="fimipay-checkout-card__logo" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
+			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
 		} else {
 			echo '<strong class="fimipay-brand-text">FimiPay</strong>';
 		}
@@ -632,62 +705,17 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		echo '<hr class="fimipay-rule" />';
 
 		$this->render_phone_field( $local, $phone, '712 345 678', __( 'Phone Number', 'fimipay-woocommerce' ) );
+		echo '<p class="fimipay-phone-hint">' . esc_html__( 'Enter the phone number linked to your wallet to pay.', 'fimipay-woocommerce' ) . '</p>';
 
 		echo '<hr class="fimipay-rule" />';
 
-		echo '<button type="button" class="fimipay-pay-btn" id="fimipay-pay-btn">';
-		echo '<span class="fimipay-pay-btn__icon" aria-hidden="true">▶</span> ';
-		echo esc_html(
-			sprintf(
-				/* translators: %s: formatted amount */
-				__( 'Pay %s', 'fimipay-woocommerce' ),
-				$amount ? $amount : __( 'now', 'fimipay-woocommerce' )
-			)
-		);
-		echo '</button>';
+		$this->render_pay_button( $amount );
 
 		echo '<hr class="fimipay-rule" />';
 
 		echo '<div class="fimipay-secure-note fimipay-secure-note--center">';
 		echo '<span class="fimipay-secure-note__icon" aria-hidden="true">🔒</span>';
 		echo '<span>' . esc_html__( 'Secure checkout powered by FimiPay', 'fimipay-woocommerce' ) . '</span>';
-		echo '</div>';
-	}
-
-	/**
-	 * Style 3 — Midnight dark premium.
-	 *
-	 * @param string $logo  Logo URL.
-	 * @param string $mode  Mode label.
-	 * @param string $desc  Description.
-	 * @param string $local Local phone.
-	 * @param string $phone Raw phone.
-	 */
-	private function render_checkout_style_midnight( $logo, $mode, $desc, $local, $phone ) {
-		echo '<div class="fimipay-midnight-glow" aria-hidden="true"></div>';
-		echo '<div class="fimipay-checkout-card__header">';
-		if ( $logo ) {
-			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--invert" src="' . esc_url( $logo ) . '" alt="FimiPay" />';
-		}
-		echo '<div class="fimipay-checkout-card__heading">';
-		echo '<strong>' . esc_html__( 'Secure mobile payment', 'fimipay-woocommerce' ) . '</strong>';
-		echo '<span class="fimipay-checkout-card__mode">' . esc_html( $mode ) . '</span>';
-		echo '</div></div>';
-
-		if ( $desc ) {
-			echo '<p class="fimipay-checkout-card__desc">' . $desc . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-
-		echo '<ul class="fimipay-steps" aria-hidden="true">';
-		echo '<li><span>1</span>' . esc_html__( 'Enter number', 'fimipay-woocommerce' ) . '</li>';
-		echo '<li><span>2</span>' . esc_html__( 'Approve USSD', 'fimipay-woocommerce' ) . '</li>';
-		echo '<li><span>3</span>' . esc_html__( 'Done', 'fimipay-woocommerce' ) . '</li>';
-		echo '</ul>';
-
-		$this->render_phone_field( $local, $phone, '07XX XXX XXX' );
-
-		echo '<div class="fimipay-secure-note">';
-		echo '<span>' . esc_html__( 'Encrypted checkout · Powered by FimiPay', 'fimipay-woocommerce' ) . '</span>';
 		echo '</div>';
 	}
 
@@ -822,6 +850,14 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$channel = isset( $_POST['fimipay_channel'] ) ? sanitize_key( wp_unslash( $_POST['fimipay_channel'] ) ) : '';
+		if ( '' === $channel && isset( $_POST['payment_data'] ) && is_array( $_POST['payment_data'] ) ) {
+			foreach ( wp_unslash( $_POST['payment_data'] ) as $entry ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				if ( is_array( $entry ) && isset( $entry['key'], $entry['value'] ) && 'fimipay_channel' === $entry['key'] ) {
+					$channel = sanitize_key( (string) $entry['value'] );
+					break;
+				}
+			}
+		}
 		$allowed_channels = array( 'mpesa', 'airtel', 'mixx', 'halopesa' );
 		if ( ! in_array( $channel, $allowed_channels, true ) ) {
 			$channel = 'mpesa';
