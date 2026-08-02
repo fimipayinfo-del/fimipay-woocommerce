@@ -166,7 +166,7 @@ class Fimipay_Gateway extends WC_Payment_Gateway {
 		if ( $this->custom_logo ) {
 			echo '<img class="fimipay-checkout-card__logo fimipay-checkout-card__logo--lg" src="' . esc_url( $this->custom_logo ) . '" alt="FimiPay" />';
 		} else {
-			echo '<img class="fimipay-brand-mark" src="' . esc_url( $this->get_brand_mark_url() ) . '" alt="" width="56" height="56" />';
+			echo '<img class="fimipay-brand-mark" src="' . esc_url( $this->get_brand_mark_url() ) . '" alt="" width="72" height="72" />';
 			echo '<span class="fimipay-brand-text">FimiPay</span>';
 		}
 		echo '</div>';

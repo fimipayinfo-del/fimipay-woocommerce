@@ -29,11 +29,11 @@
 }
 
 .fimipay-brand-mark {
-	width: 56px;
-	height: 56px;
+	width: 72px;
+	height: 72px;
 	flex-shrink: 0;
 	object-fit: contain;
-	border-radius: 14px;
+	border-radius: 16px;
 }
 
 .fimipay-checkout-card__logo {
@@ -50,7 +50,7 @@
 }
 
 .fimipay-brand-text {
-	font-size: 1.85rem;
+	font-size: 2.15rem;
 	font-weight: 800;
 	color: var(--fimipay-blue);
 	letter-spacing: -0.03em;
